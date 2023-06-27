@@ -25,7 +25,9 @@ class ShapeNetModel:
 
     @property
     def raw_model_path(self):
-        return os.path.join(self._base_dir, self._model_tag, "model.obj")
+        model_path = os.path.join(self._model_tag, "model.obj")
+        print(f"Currently processing {model_path}")
+        return model_path
 
     @property
     def textured_mesh(self):

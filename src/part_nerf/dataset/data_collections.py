@@ -101,7 +101,7 @@ class BasicScenes(BaseDataCollection):
         self._base_dir = Path(base_dir)
         self._config = config
         self._scenes_folders = sorted(
-            [d.name for d in self._base_dir.iterdir() if (self._base_dir / d).is_dir()]
+            [d.name for d in self._base_dir.iterdir() if d.is_dir()]
         )
         # We associate every image within the images_folder directory with a
         # tag

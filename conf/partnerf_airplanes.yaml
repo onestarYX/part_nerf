@@ -1,7 +1,7 @@
 train_data:
   dataset_factory: "RaysMasksColorsIndexedDataset"
   collection_type: "shapenet"
-  dataset_directory: "/data/ShapeNetCore.v1-NeRF/02691156"
+  dataset_directory: "../data/ShapeNetCore.v1/02691156_cp"
   images_folder: "images_256_256"
   cameras_folder: "cameras_256_256"
   masks_folder: "masks_256_256"
@@ -16,7 +16,7 @@ train_data:
   splits: ["train", "val"]
 train:
   num_workers: 2
-  batch_size: 6
+  batch_size: 2
 val_data: null
 validation: null
 model:
