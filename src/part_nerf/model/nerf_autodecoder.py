@@ -96,6 +96,7 @@ class NerfAutodecoder(nn.Module):
         self, X: Dict[str, torch.Tensor], pred_dict: Dict[str, torch.Tensor]
     ) -> Dict[str, torch.Tensor]:
         if self._ray_part_associator is not None:
+            # Associate each ray with a part
             pred_dict.update(self._ray_part_associator(X, pred_dict))
         pred_dict.update(self._color_network(X, pred_dict))
         return pred_dict

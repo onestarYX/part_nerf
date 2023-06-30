@@ -217,7 +217,7 @@ def inside_outside_function_ellipsoid(
     # numerical issues in computing the gradient
     # zeros = X == 0
     # X[zeros] = X[zeros] + 1e-6
-    X = ((X > 0).float() * 2 - 1) * torch.max(torch.abs(X), X.new_tensor(1e-6))
+    X = ((X > 0).float() * 2 - 1) * torch.max(torch.abs(X), X.new_tensor(1e-6)) # Basically set zero to 1e-6 in X.
     F = (X[..., 0] / a1) ** 2 + (X[..., 1] / a2) ** 2 + (X[..., 2] / a3) ** 2
 
     # Sanity check to make sure that we have the expected size
@@ -381,6 +381,8 @@ def apply_sigmoid_to_inside_outside_function(
     sharpness_outside: float = 10.0,
 ) -> torch.Tensor:
     """
+    Apply sigmoid with sharpness
+
     Args:
         F (torch.Tensor): Tensor with size BxNxM, containing the inside-outside function
             for each of the 3D points. The assumption is that the point is inside when F > 0 and

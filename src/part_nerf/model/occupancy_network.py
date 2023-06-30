@@ -184,7 +184,7 @@ class MiniOccupancyWithEllipsoidsMaskingFunction(MiniOccupancyFunction):
                         torch.zeros((1, N, M, self._out_dim - 1), device=point_b.device)
                     )
                 continue
-            # Keep only the points that are inside the ellipsoid in a batched way
+            # Keep only the points that are inside the ellipsoid in a batched way (batch over M)
             masked_points = torch.zeros(
                 (1, max_inside_points, M, 3), device=point_b.device
             )
@@ -281,12 +281,13 @@ class MiniOccupancyWithEllipsoidsMaskingFunction(MiniOccupancyFunction):
             assert points_transformed.shape == (B, num_split_points, M, 3)
             transformed_points_list.append(points_transformed)
 
-            # Ellipsoid inside-outside function
+            # Ellipsoid inside-outside function (diag(alpha^-1) * points)
             ellipsoid_inside_outside_F = inside_outside_function_ellipsoid(
                 points_transformed, alphas
             )
             ellipsoid_inside_outside_list.append(ellipsoid_inside_outside_F)
-        inside_outside_values = torch.cat(ellipsoid_inside_outside_list, dim=1)
+        inside_outside_values = torch.cat(ellipsoid_inside_outside_list, dim=1) # this is diag(alpha^-1) * points
+        # Get ellipsoid occupancy value, with 0.5 being on the ellipsoid surface (eqn 6 in paper).
         coarse_implicit_values = get_implicit_surface_from_inside_outside_function(
             inside_outside_values,
             sharpness_inside=self._sharpness_inside,
@@ -300,7 +301,7 @@ class MiniOccupancyWithEllipsoidsMaskingFunction(MiniOccupancyFunction):
 
         # Create mask for ray points that are inside an ellipsoid
         points_inside_ellipsoid = inside_outside_values <= 1  # (B, N, num_points, M)
-
+        # Get occupancy field for each part / Get point features for each part (only for points that are inside)
         implicit_values, point_features = self.get_occupancy_implicit_field(
             transformed_points,
             part_shape_features,
@@ -308,7 +309,7 @@ class MiniOccupancyWithEllipsoidsMaskingFunction(MiniOccupancyFunction):
         )
         assert implicit_values.shape == (B, N * num_points, M)
         implicit_values = implicit_values.reshape((B, N, num_points, M))
-        # filter out the implicit values that are outside the ellipsoids
+        # filter out the implicit values that are outside the ellipsoids (this only smooths occupancy inside the ellipsoid)
         implicit_values = coarse_implicit_values * implicit_values
 
         pred_dict["implicit_field"] = implicit_values
