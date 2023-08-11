@@ -1,11 +1,11 @@
 train_data:
   dataset_factory: "RaysMasksColorsIndexedDataset"
   collection_type: "lego_dataset"
-  dataset_directory: "../data/NeRF_datasets_lego"
+  dataset_directory: "../data/NeRF_datasets_chair"
   images_folder: "images"
   cameras_folder: "cameras"
   masks_folder: "masks"
-  splits_file: "../conf/new_tractor.csv"
+  splits_file: "../conf/nerf_chair.csv"
   image_size: [400, 400]
   near: 2.
   far: 6.
